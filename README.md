@@ -36,4 +36,4 @@ Each `view_comic_here.html` contains:
 
 Like this:
 
-![](screenshot.jpg)
+![](screenshot.png)
