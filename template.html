@@ -57,9 +57,9 @@
         ${p}
     </nav>
     <article>
-        <p>${subDirs.sort().map(d => `<a href="${d}${path.sep}${indexFilename}">${d}${path.sep}</a>`).join('\n')}</p>
-        <p>${miscFiles.sort().map(m => `<a href="${m}">${m}</a>`).join('\n')}</p>
-        <p>${imgFiles.sort().map(f => `<img src="${f}" title="${f}">`).join('\n')}</p>
+        <p>${subDirs.sort().map(d => `<a href="${encodeURIComponent(d)}${path.sep}${indexFilename}">${d}${path.sep}</a>`).join('\n')}</p>
+        <p>${miscFiles.sort().map(m => `<a href="${encodeURIComponent(m)}">${m}</a>`).join('\n')}</p>
+        <p>${imgFiles.sort().map(f => `<img src="${encodeURIComponent(f)}" title="${f}">`).join('\n')}</p>
     </article>
 </body>
 
