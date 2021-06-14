@@ -31,9 +31,30 @@ const process = require('process');
 async function processDir({ workingDirectory = process.cwd(), indexFilename = 'view_comic_here.html', templateFilename = 'template.html' } = {}) {
     console.log(arguments);
     console.log(workingDirectory, indexFilename, templateFilename);
-    let template = await fs.readFile(path.join(__dirname, templateFilename), 'utf-8');
-    let numericOrder = (a, b) => (a.length - b.length) || (a > b ? 1 : -1);
-    let processRecur = async p => {
+    const template = await fs.readFile(path.join(__dirname, templateFilename), 'utf-8');
+    // string natural comparation "alphanum" algorithm
+    // https://stackoverflow.com/questions/1601834/c-implementation-of-or-alternative-to-strcmplogicalw-in-shlwapi-dll
+    // https://docs.microsoft.com/en-us/previous-versions/technet-magazine/hh475812(v=msdn.10)?redirectedfrom=MSDN
+    const naturalCompare = (x, y) => {
+        const isDigit = c => { let i = c.charCodeAt(); return i >= 48 && i <= 57 };
+        const toDigit = c => c.charCodeAt() - 48;
+        let lx = x.length, ly = y.length, mx, my;
+        for (mx = 0, my = 0; mx < lx && my < ly; mx++, my++) {
+            if (isDigit(x[mx]) && isDigit(y[my])) {
+                let vx = 0, vy = 0;
+                for (; mx < lx && isDigit(x[mx]); mx++)
+                    vx = vx * 10 + toDigit(x[mx]);
+                for (; my < ly && isDigit(y[my]); my++)
+                    vy = vy * 10 + toDigit(y[my]);
+                if (vx != vy)
+                    return vx > vy ? 1 : -1;
+            }
+            if (mx < lx && my < ly && x[mx] != y[my])
+                return x[mx] > y[my] ? 1 : -1;
+        }
+        return lx - ly;
+    };
+    const processRecur = async p => {
         try {
             let dir = await fs.opendir(p);
             let subDirs = [];
@@ -45,10 +66,9 @@ async function processDir({ workingDirectory = process.cwd(), indexFilename = 'v
                     subDirs.push(name);
                     processRecur(path.join(p, name)); // no await
                 } else if (dirent.isFile()) {
-                    let nameParsed = path.parse(name);
-                    let extl = nameParsed.ext.toLowerCase();
+                    let extl = name.match(/\.(\w+)$/)?.[0]?.toLowerCase();
                     if ({ '.jpg': 1, '.jpeg': 1, '.jpe': 1, '.jfif': 1, '.png': 1, '.gif': 1, '.bmp': 1, }[extl]) {
-                        imgFiles.push(nameParsed);
+                        imgFiles.push(name);
                     } else if ({ '.htm': 1, '.html': 1, '.txt': 1, }[extl]) {
                         if (name !== indexFilename) {
                             miscFiles.push(name);
@@ -56,11 +76,11 @@ async function processDir({ workingDirectory = process.cwd(), indexFilename = 'v
                     }
                 }
             }
-            let subDirsHtml = subDirs.sort(numericOrder)
+            let subDirsHtml = subDirs.sort(naturalCompare)
                 .map(d => `<a href="${encodeURIComponent(d)}${path.sep}${indexFilename}">${d}${path.sep}</a>`).join('\n');
-            let imgFilesHtml = imgFiles.sort((a, b) => numericOrder(a.name, b.name))
-                .map(f => `<img src="${encodeURIComponent(f.base)}" title="${f.base}">`).join('\n');
-            let miscFilesHtml = miscFiles.sort()
+            let imgFilesHtml = imgFiles.sort(naturalCompare)
+                .map(f => `<img src="${encodeURIComponent(f)}" title="${f}">`).join('\n');
+            let miscFilesHtml = miscFiles.sort(naturalCompare)
                 .map(m => `<a href="${encodeURIComponent(m)}">${m}</a>`).join('\n');
             fs.writeFile(path.join(p, indexFilename), eval('`' + template + '`'), 'utf-8');
         } catch (err) {
