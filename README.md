@@ -26,14 +26,8 @@ SOFTWARE.
 
 ## Usage
 
-Open text console, run `node view_comic_here.js <comic directory>`, or `chmod +x view_comic_here.js` and `view_comic_here.js <comic directory>`, it will recursively generate `view_comic_here.html` in all sub directories.
+In anywhere your comic located, run `make-comic-here.bat`, it will recursively generate `view-comic-here.html` in all sub directories. Open and enjoy them, just like this:
 
-Each `view_comic_here.html` contains:
-
-1. Ordered sub directories hyperlinks,
-2. Ordered html, text files hyperlinks,
-3. Ordered 100% width images.
-
-Like this:
+This project requires `js.exe` from <https://github.com/shajunxing/banana-script>, earlier node.js version nolonger supported.
 
 ![](screenshot.png)
