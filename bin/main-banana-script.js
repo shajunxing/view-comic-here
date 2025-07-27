@@ -8,7 +8,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
-let template = fread(dirname(argv[1]) + pathsep + "template.html");
+let template = read(dirname(argv[1]) + pathsep + "template.html");
 let index_file_name = "view-comic-here.html";
 let up_href = "../" + index_file_name;
 
@@ -68,7 +68,7 @@ function process_dir(dir) {
         misc_files_html += format("<a href=\"${0}\">${0}</a>\n", misc_name);
     }
     // print(misc_files_html);
-    fwrite(format(template), dir + pathsep + index_file_name);
+    write(dir + pathsep + index_file_name, format(template));
     return img_files[0];
 }
 
