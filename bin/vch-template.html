@@ -30,15 +30,15 @@ You should have received a copy of the GNU General Public License along with thi
 
         a {
             text-decoration: none;
-            color: #66f;
+            color: #39f;
         }
 
         a:hover {
-            color: #99f;
+            color: #6cf;
         }
 
         a:visited {
-            color: #c3f;
+            color: #39f;
         }
 
         nav {
@@ -49,21 +49,34 @@ You should have received a copy of the GNU General Public License along with thi
             padding: 0.5em;
         }
 
+        nav .button {
+            display: inline-block;
+            min-width: 1.4em;
+            text-align: center;
+        }
+        
+        article > h1 {
+            text-align: center;
+            font-size: 1.2em;
+        }
+
         article a {
             display: inline-block;
         }
 
-        article a:not(:last-child) {
-            margin-right: 1em;
+        .dir, .img, .misc  {
+            margin-top: 0.5em;
+            padding-top: 0.5em;
+            border-top: 1px solid #ccc;
         }
 
-        p.dir {
+        .dir {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
         }
 
-        p.dir a {
+        .dir a {
             display: inline-flex;
             flex-direction: column;
             align-items: center;
@@ -73,13 +86,18 @@ You should have received a copy of the GNU General Public License along with thi
             background-color: #333;
         }
 
-        p.dir img {
+        .dir img {
             max-width: 100%;
         }
 
-        p.img {
+        .img {
             text-align: center;
             direction: rtl;
+        }
+
+        .misc a {
+            padding-left: 0.5em;
+            padding-right: 0.5em;
         }
     </style>
     <script>
@@ -102,10 +120,10 @@ You should have received a copy of the GNU General Public License along with thi
         function update() {
             let oldY = getScrollY();
             let oldHeight = getScrollHeight();
-            for (let img of document.querySelectorAll("p.dir img")) {
+            for (let img of document.querySelectorAll(".dir img")) {
                 img.setAttribute("style", brightness_css);
             }
-            for (let img of document.querySelectorAll("p.img img")) {
+            for (let img of document.querySelectorAll(".img img")) {
                 img.setAttribute("style", maxwidth_css + brightness_css);
             }
             window.scrollTo(0, getScrollHeight() * oldY / oldHeight);
@@ -149,20 +167,17 @@ You should have received a copy of the GNU General Public License along with thi
 
 <body>
     <article>
-        <p style="text-align: center;">
+        <h1>
             ${title}
-        </p>
-        <hr>
+        </h1>
         <p class="dir">
             ${sub_dirs_html}
         </p>
-        <hr>
-        <p class="misc">
-            ${misc_files_html}
-        </p>
-        <hr>
         <p class="img">
             ${img_files_html}
+        </p>
+        <p class="misc">
+                ${misc_files_html}
         </p>
     </article>
     <!-- nav放在后面，因为默认文档后面的z-index高于前面的 -->

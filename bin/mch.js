@@ -20,13 +20,14 @@ function last_directory(path) {
 
 // returns first image as cover
 function process_dir(dir, prev, next) {
+    print(dir);
     let sub_dirs = [];
     let img_files = [];
     let misc_files = [];
     ls(dir, function(filename, isdir) {
         if (isdir) {
             sub_dirs::push(filename);
-        } else if (filename::endswith(".jpg", ".jpeg", ".jpe", ".jfif", ".png", ".gif", ".bmp", ".webp")) {
+        } else if (filename::tolower()::endswith(".jpg", ".jpeg", ".jpe", ".jfif", ".png", ".gif", ".bmp", ".webp")) {
             img_files::push(filename);
         } else {
             misc_files::push(filename);
@@ -51,15 +52,11 @@ function process_dir(dir, prev, next) {
     for (let misc_name of misc_files) {
         misc_files_html += format("<a href=\"${0}\">${0}</a>\n", misc_name);
     }
-    let prev_link = prev == null ? "" : format(format("<a href=\"../${0}/${1}\">🡠</a> ", prev, index_file_name));
-    let next_link = next == null ? "" : format(format(" <a href=\"../${0}/${1}\">🡢</a>", next, index_file_name));
+    let prev_link = prev == null ? "<span class = \"button\"></span>" : format(format("<a class=\"button\" href=\"../${0}/${1}\">🡠</a>", prev, index_file_name));
+    let next_link = next == null ? "<span class = \"button\"></span>" : format(format("<a class=\"button\" href=\"../${0}/${1}\">🡢</a>", next, index_file_name));
     write(dir + pathsep + index_file_name, format(template));
     return img_files[0];
 }
 
-let wd = cwd();
-if (!wd::endswith(pathsep)) {
-    wd += pathsep;
-}
-process_dir(wd);
+process_dir(cwd());
 print("Done.");
