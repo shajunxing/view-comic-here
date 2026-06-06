@@ -1,0 +1,204 @@
+<!--
+Copyright 2024-2026 ShaJunXing <shajunxing@hotmail.com>
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>%1$s</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%%;
+            height: 100%%;
+        }
+
+        body {
+            background-color: #000;
+            color: #ccc;
+        }
+
+        a {
+            text-decoration: none;
+            color: #39f;
+        }
+
+        a:hover {
+            color: #6cf;
+        }
+
+        a:visited {
+            color: #39f;
+        }
+
+        nav {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 0.5em;
+        }
+
+        nav .button {
+            display: inline-block;
+            min-width: 1.4em;
+            text-align: center;
+        }
+        
+        article > h1 {
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        article a {
+            display: inline-block;
+        }
+
+        .dir, .img, .misc  {
+            margin-top: 0.5em;
+            padding-top: 0.5em;
+            border-top: 1px solid #ccc;
+        }
+
+        .dir {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .dir a {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            width: 120px;
+            margin: 0.5em;
+            padding: 0.5em;
+            background-color: #333;
+        }
+
+        .dir img {
+            max-width: 100%%;
+        }
+
+        .img {
+            text-align: center;
+            direction: rtl;
+        }
+
+        .misc a {
+            padding-left: 0.5em;
+            padding-right: 0.5em;
+        }
+    </style>
+    <script>
+        let maxwidth_css = "";
+        let brightness_css = "";
+
+        // https://javascript.info/size-and-scroll-window
+        function getScrollHeight() {
+            return Math.max(
+                document.body.scrollHeight, document.documentElement.scrollHeight,
+                document.body.offsetHeight, document.documentElement.offsetHeight,
+                document.body.clientHeight, document.documentElement.clientHeight
+            );
+        }
+
+        function getScrollY() {
+            return window.pageYOffset;
+        }
+
+        function update() {
+            let oldY = getScrollY();
+            let oldHeight = getScrollHeight();
+            for (let img of document.querySelectorAll(".dir img")) {
+                img.setAttribute("style", brightness_css);
+            }
+            for (let img of document.querySelectorAll(".img img")) {
+                img.setAttribute("style", maxwidth_css + brightness_css);
+            }
+            window.scrollTo(0, getScrollHeight() * oldY / oldHeight);
+        }
+
+        function maxwidth_click(e) {
+            // 此处不能用模板字符串，因为该文档已经是模板了
+            let value = e.target.value;
+            localStorage.setItem("maxwidth", value);
+            maxwidth_css = value == "default" ? "" : "max-width:" + value + ";";
+            update();
+            e.target.blur(); // 去掉键盘焦点
+        }
+
+        function brightness_click(e) {
+            let value = e.target.value;
+            localStorage.setItem("brightness", value);
+            brightness_css = value == "default" ? "" : "filter:brightness(" + value + ");";
+            update();
+            e.target.blur(); // 去掉键盘焦点
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let maxwidth = localStorage.getItem("maxwidth");
+            for (let radio of document.getElementsByName("maxwidth")) {
+                radio.addEventListener("change", maxwidth_click);
+                if (radio.value == maxwidth) {
+                    radio.click();
+                }
+            }
+            let brightness = localStorage.getItem("brightness");
+            for (let radio of document.getElementsByName("brightness")) {
+                radio.addEventListener("change", brightness_click);
+                if (radio.value == brightness) {
+                    radio.click();
+                }
+            }
+        })
+    </script>
+</head>
+
+<body>
+    <article>
+        <h1>
+            %1$s
+        </h1>
+        <p class="dir">
+            %2$s
+        </p>
+        <p class="img">
+            %3$s
+        </p>
+        <p class="misc">
+            %4$s
+        </p>
+    </article>
+    <!-- nav放在后面，因为默认文档后面的z-index高于前面的 -->
+    <nav>
+        <p style="text-align: right;">
+            %5$s%6$s%7$s
+        </p>
+        <p>
+            Max Width<br>
+            <label><input type="radio" name="maxwidth" value="default" checked>default</label><br>
+            <label><input type="radio" name="maxwidth" value="80%%">80%%</label><br>
+            <label><input type="radio" name="maxwidth" value="60%%">60%%</label><br>
+            <label><input type="radio" name="maxwidth" value="40%%">40%%</label>
+        </p>
+        <p>
+            Brightness<br>
+            <label><input type="radio" name="brightness" value="default" checked>default</label><br>
+            <label><input type="radio" name="brightness" value="60%%">60%%</label><br>
+            <label><input type="radio" name="brightness" value="30%%">30%%</label>
+        </p>
+    </nav>
+</body>
+
+</html>
